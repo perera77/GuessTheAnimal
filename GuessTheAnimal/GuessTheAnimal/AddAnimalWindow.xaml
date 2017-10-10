@@ -1,0 +1,24 @@
+﻿<Window x:Class="GuessTheAnimal.AddAnimalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GuessTheAnimal"
+        mc:Ignorable="d"
+        Title="Add Animal" Height="359.091" Width="301.818">
+    <StackPanel Margin="5">
+        <GroupBox VerticalAlignment="Top" Header="Defined Animals">
+            <ItemsControl Name="icDefinedAnimals"></ItemsControl>
+        </GroupBox>
+
+        <GroupBox VerticalAlignment="Center" Header="New Animal">
+            <StackPanel>
+                <Label Content="_Name:" Target="{Binding ElementName=txtName}" />
+                <TextBox Name="txtName" />
+                <Label Content="_Facts:" Target="{Binding ElementName=txtFacts}" />
+                <TextBox Name="txtFacts" TextWrapping="Wrap" Height="50" ToolTip="Add comma separated list of facts of the animal."/>
+            </StackPanel>
+        </GroupBox>
+        <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" IsDefault="True" Click="Button_Click" MinWidth="50" Margin="0,10,0,0">_Ok</Button>
+    </StackPanel>
+</Window>
