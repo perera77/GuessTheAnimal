@@ -16,7 +16,7 @@ namespace GuessTheAnimal
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            MainWindow wnd = new MainWindow(new AnimalsPresenter());
+            MainWindow wnd = new MainWindow();
             wnd.Show();
         }
     }

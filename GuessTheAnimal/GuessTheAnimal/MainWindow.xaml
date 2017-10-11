@@ -10,7 +10,7 @@
     <Window.Resources>
         <LinearGradientBrush x:Key="WindowBackgroundBrush">
             <GradientStop Offset="0" Color="Silver"/>
-            <GradientStop Offset="1" Color="AliceBlue"/>
+            <GradientStop Offset="1" Color="AntiqueWhite"/>
         </LinearGradientBrush>
     </Window.Resources>
 

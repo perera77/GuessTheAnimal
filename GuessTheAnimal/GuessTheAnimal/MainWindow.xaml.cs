@@ -16,71 +16,59 @@ using System.Windows.Shapes;
 
 namespace GuessTheAnimal
 {
+    public interface IMainView
+    {
+        void showAnimalList();
+        bool inquireFact(string fact);
+        void showGuesedAnimal(string animal);
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IMainView
     {
         private IAnimalsPresenter presenter;
-        private static readonly Random rndGenerator = new Random();
-        public MainWindow(IAnimalsPresenter presenter)
+        public MainWindow()
         {
             InitializeComponent();
-            this.presenter = presenter;
+            this.presenter = new AnimalsPresenter(this);
         }
 
         private void playBtn_Click(object sender, RoutedEventArgs e)
         {
-            string message = "Choose one of the listed animals in your head:\n";
-            foreach (Animal animal in presenter.Animals)
-            {
-                message += "  > " + animal.Name + "\n";
-            }
-            MessageBox.Show(message,
-                "Chose Animal",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-
-            List<Animal> selctedAnimals = new List<Animal>(presenter.Animals);
-            while (selctedAnimals.Count > 1)
-            {
-                List<string> facts = new List<string>();
-                foreach (Animal animal in selctedAnimals)
-                {
-                    foreach (string fact in animal.Facts)
-                    {
-                        facts.Add(fact); // May get duplicates, OK
-                    }
-                }
-
-                int randomIndex = rndGenerator.Next(0, facts.Count);
-                message = "Is your animal " + facts[randomIndex];
-                List<Animal> newSelctedAnimals = new List<Animal>();
-                if (MessageBox.Show(message, "Fact", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    foreach (Animal animal in selctedAnimals)
-                    {
-                        if (animal.Facts.Any(x => x.Equals(facts[randomIndex], StringComparison.OrdinalIgnoreCase)))
-                            newSelctedAnimals.Add(animal);
-                    }
-                }
-                else
-                {
-                    foreach (Animal animal in selctedAnimals)
-                    {
-                        if (!animal.Facts.Any(x => x.Equals(facts[randomIndex], StringComparison.OrdinalIgnoreCase)))
-                            newSelctedAnimals.Add(animal);
-                    }
-                }
-                selctedAnimals = newSelctedAnimals;
-            }
-            MessageBox.Show("The animal you chose was " + selctedAnimals[0].Name, "Found animal", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            presenter.guessAnimal();
         }
 
         private void addAnimalBtn_Click(object sender, RoutedEventArgs e)
         {
             AddAnimalWindow dialog = new AddAnimalWindow(presenter);
             dialog.ShowDialog();
+        }
+
+        public void showAnimalList()
+        {
+            string message = "Choose one of the listed animals in your head:\n";
+            foreach (Animal animal in presenter.Animals)
+            {
+                message += "  > " + animal.Name + "\n";
+            }
+
+            MessageBox.Show(message,
+                "Choose Animal",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        public bool inquireFact(string fact)
+        {
+            string message = "Is your animal " + fact;
+            return MessageBox.Show(message, "Fact verification", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+        }
+
+        public void showGuesedAnimal(string animal)
+        {
+            MessageBox.Show("The animal you chose was " + animal, "Found animal!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
     }
 }
