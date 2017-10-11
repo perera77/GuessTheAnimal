@@ -10,13 +10,17 @@ namespace GuessTheAnimal.Presenters
     {
         IEnumerable<Animal> Animals { get; }
         void addAnimal(Animal animal);
+        void guessAnimal();
     }
 
     public class AnimalsPresenter : IAnimalsPresenter
     {
         private List<Animal> animals;
-        public AnimalsPresenter()
+        private IMainView mainView;
+        private static readonly Random rndGenerator = new Random();
+        public AnimalsPresenter(IMainView mainView)
         {
+            this.mainView = mainView;
             // Setup initial list of animals from a file or defaults
             if (File.Exists("animals.json"))
             {
@@ -51,6 +55,45 @@ namespace GuessTheAnimal.Presenters
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, animals);
             }
+        }
+
+        public void guessAnimal()
+        {
+            mainView.showAnimalList();
+            
+            List<Animal> selctedAnimals = new List<Animal>(Animals);
+            while (selctedAnimals.Count > 1)
+            {
+                List<string> facts = new List<string>();
+                foreach (Animal animal in selctedAnimals)
+                {
+                    foreach (string fact in animal.Facts)
+                    {
+                        facts.Add(fact); // May get duplicates, OK
+                    }
+                }
+
+                int randomIndex = rndGenerator.Next(0, facts.Count);
+                List<Animal> newSelctedAnimals = new List<Animal>();
+                if (mainView.inquireFact(facts[randomIndex]))
+                {
+                    foreach (Animal animal in selctedAnimals)
+                    {
+                        if (animal.Facts.Any(x => x.Equals(facts[randomIndex], StringComparison.OrdinalIgnoreCase)))
+                            newSelctedAnimals.Add(animal);
+                    }
+                }
+                else
+                {
+                    foreach (Animal animal in selctedAnimals)
+                    {
+                        if (!animal.Facts.Any(x => x.Equals(facts[randomIndex], StringComparison.OrdinalIgnoreCase)))
+                            newSelctedAnimals.Add(animal);
+                    }
+                }
+                selctedAnimals = newSelctedAnimals;
+            }
+            mainView.showGuesedAnimal(selctedAnimals[0].Name);
         }
     }
 }
